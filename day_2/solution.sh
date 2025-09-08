@@ -31,7 +31,7 @@ solution_1 () {
                 decreasing=true
                 increasing=false
             fi
-        done
+        done 
         # echo "Line: $line | Safe: $safe"
         [[ "$safe" == "true" ]] && ((answer++))
     done < $1
