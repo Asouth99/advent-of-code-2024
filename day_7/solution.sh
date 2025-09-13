@@ -114,7 +114,7 @@ solution_2 () {
     # Create output file
     output_file="${1/.txt/}_output.txt"
     if test -f $output_file ; then
-        echo "Output file exists! Exiting..."
+        echo "Output file $output_file exists! Exiting..."
         exit 1
     fi
 
@@ -152,34 +152,40 @@ solution_2 () {
 
     for ((j = 0 ; j < number_of_operations_to_try ; j++ )); do
         operation=""
-        for ((k = 0 ; k < (${#numbers[*]} - 1) ; k++ )); do
+        for ((k = 0 ; k < (${#numbers_of_equation_with_most_numbers[*]} - 1) ; k++ )); do
             operation_index=$(( (j / ( ${#allowed_operations[*]} ** k )) % ${#allowed_operations[*]} ))
             operation="${allowed_operations[$operation_index]}${operation}"
         done
         # echo "Operation ${j}: ${operation}"
         operations_options+=("$operation")
     done
-    # echo "  Operation Options: ${operations_options[*]}"
+
+    echo -n "  Operation Options: "
+    for ((j = 1; j <= 100; j++)); do
+        echo -n "${operations_options[$j]}, "
+    done
+    echo
 
 
     # Attempt to solve each equation
     IFS=" "
     for ((i = 0 ; i < "$number_of_equations" ; i++ )); do
-        # [[ "$i" -gt "6" ]] && break
+        # [[ "$i" -gt "2" ]] && break
 
         # Set some vars
         result="${results[$i]}"
         count=$((i+1))
-        echo -n "  ($count/$number_of_equations) Attempting to solve | $result : "
+        echo -n "  ($count/$number_of_equations) Attempting to solve | <$result> : "
         read -ra numbers <<< "${equations[$i]}"
-        echo "${numbers[*]}"
+        echo "<${numbers[*]}> | First few numbers are <${numbers[0]}> <${numbers[1]}>"
 
         # Check if the number is in the pre calculated list. 
         found_in_pre_calculated_list=false
         for ((j = 0 ; j < "${#pre_calculated_results[*]}" ; j++ )); do
             if [[ "$result" -eq "${pre_calculated_results[$j]}" ]]; then
-                echo "    Found $result in the pre calculated list. $result = ${pre_calculated_equations[$j]}"
+                echo "    Found <$result> in the pre calculated list. <$result> = <${pre_calculated_equations[$j]}>"
                 found_in_pre_calculated_list=true
+                echo "$result : ${pre_calculated_equations[$j]}"  >> "$output_file"
                 answer=$(( answer + result ))
                 break
             fi
@@ -193,15 +199,14 @@ solution_2 () {
         # For each operation combination calcualte the value of it and check if it equals the result.
         for ((j = 0 ; j < number_of_operations_to_try ; j++ )); do
             operation="${operations_options[$j]}"
+            # echo -n "      Found operation ${operation} Shortening this..."
             operation="${operation:(( ${#operation} - ${#numbers[*]} + 1  )):((${#numbers[*]} - 1))}"
             # echo "      Trying ${operation}"
             string_to_calculate="${numbers[0]}"
             tmp_calculation="${numbers[0]}"
             for ((k = 1 ; k < "${#numbers[*]}" ; k++ )); do
                 string_to_calculate="${string_to_calculate} ${operation:(($k-1)):1} ${numbers[$k]}"
-                # tmp_calculation="${tmp_calculation} ${operation:(($k-1)):1} ${numbers[$k]}"
-
-                case ${operation:(($k-1)):1} in
+                case "${operation:(($k-1)):1}" in
                     "+")
                         tmp_calculation=$(( tmp_calculation + ${numbers[$k]} ))
                         ;;
@@ -237,6 +242,8 @@ solution_2 () {
 # echo
 # solution_1 input.txt # 3312271365652 | Took 670 seconds
 
-solution_2 example_input.txt # example_input_pre_calculated.txt
-echo
-solution_2 input.txt input_pre_calculated.txt # 451970149727469 | Took 2901 seconds
+# solution_2 example_input.txt # example_input_pre_calculated.txt
+# echo
+solution_2 input.txt input_pre_calculated.txt # 509463489296712 | Took 1787 seconds
+
+# solution_2 input_test.txt
