@@ -13,7 +13,9 @@ solution_1 () {
     # Step 3 (checksum)  : 0099811188827773336446555566.............. --> 0*0 + 1*0 + 2*9 + 3*9... = 1928
     # echo "Input number is: $number"
 
-    echo "step 1 - formatting " #<$number>"
+    # echo "step 1 - formatting <$number>"
+    echo "step 1 - formatting <${number::100}>"
+
     number_formatted=""
     for ((i = 0 ; i < ${#number} ; i++ )); do
         digit="${number:$i:1}"
@@ -27,7 +29,13 @@ solution_1 () {
         number_formatted="$number_formatted$string_to_add"
     done
     # echo "  Formatted number: $number_formatted"
-    echo "step 2 - rearranging " #<$number_formatted>"
+    if [[ -n $2 ]]; then
+        echo "Formatted number: $number_formatted" >> $2
+    fi
+
+    # echo "step 2 - rearranging <$number_formatted>"
+    echo "step 2 - rearranging <${number_formatted::100}>"
+    
     number_rearranged=$number_formatted
     rearranged=false
 
@@ -72,6 +80,11 @@ solution_1 () {
     # do the rearranging - second method
     reverse_index=$((${#number_rearranged} - 1))
     for (( i = 0 ; i < ${#number_rearranged} ; i++ )); do
+        # echo "i=$i , reverse_index=$reverse_index"
+        if [[ $i -gt $reverse_index ]]; then
+            break
+        fi
+
         if [[ "${number_rearranged:$i:1}" = "." ]]; then
             # echo "Before: ${number_rearranged::$i} | ${number_rearranged:$reverse_index:1} | After: ${number_rearranged:($i+1)}"
             number_rearranged="${number_rearranged::$i}${number_rearranged:$reverse_index:1}${number_rearranged:($i+1)}"
@@ -79,7 +92,7 @@ solution_1 () {
             while [[ ${number_rearranged:$reverse_index:1} = "." ]]; do
                 ((reverse_index--))
                 if [[ $reverse_index -lt 0 ]]; then
-                    break
+                    break 2
                 fi
             done
         fi
@@ -89,7 +102,14 @@ solution_1 () {
     number_rearranged=${number_rearranged::$digit_count}
 
     # echo "  Rearranged number: $number_rearranged"
-    echo "step 3 - checksumming " #<$number_rearranged>"
+    if [[ -n $2 ]]; then
+        echo "Rearranged number: $number_rearranged" >> $2
+    fi
+
+
+
+    echo "step 3 - checksumming <${number_rearranged::100}>"
+    # echo "step 3 - checksumming <$number_rearranged>"
 
     number_checksum=0
     for ((i = 0 ; i < ${#number_rearranged} ; i++ )); do
@@ -97,7 +117,10 @@ solution_1 () {
         number_checksum=$((number_checksum + digit * i))
     done
 
-    echo "  Checksum number: $number_checksum"
+    echo "  Checksum number: $number_checksum"  
+    if [[ -n $2 ]]; then
+        echo "Checksum number: $number_checksum" >> $2
+    fi
 
     answer=$number_checksum
     echo "Answer is: $answer"
@@ -106,7 +129,16 @@ solution_1 () {
     echo "Answer took $seconds_diff seconds to calculate"
 }
 
+checksum () {
+    local number=$1
+    local checksum=0
+    for ((i = 0 ; i < ${#number} ; i++ )); do
+        local digit="${number:$i:1}"
+        checksum=$((checksum + digit * i))
+    done
 
+    echo "$checksum"  
+}
 
 
 
@@ -125,8 +157,12 @@ solution_2 () {
 
 
 solution_1 example_input.txt
-echo
+# echo
 solution_1 input.txt
+# solution_1 input.txt output.txt # 90119246415 took 6537 seconds -> incorrect
+
+# checksum $(cat input_rearranged.txt)
+
 
 # solution_2 example_input.txt
 # echo
