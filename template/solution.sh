@@ -31,6 +31,6 @@ solution_1 example_input.txt
 # echo
 # solution_1 input.txt
 
-# solution_2 example_input_2.txt
+# solution_2 example_input.txt
 # echo
 # solution_2 input.txt
