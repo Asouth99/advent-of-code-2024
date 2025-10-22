@@ -7,7 +7,7 @@ solution_1 () {
     answer=0
 
 
-
+    echo
     echo "Answer is: $answer"
     seconds_end=$SECONDS
     seconds_diff=$((seconds_end - seconds_start))
@@ -17,10 +17,11 @@ solution_1 () {
 solution_2 () {
     seconds_start=$SECONDS
     echo "Reading file: $1"
+    echo
     answer=0
 
     
-
+    echo
     echo "Answer is: $answer"
     seconds_end=$SECONDS
     seconds_diff=$((seconds_end - seconds_start))
