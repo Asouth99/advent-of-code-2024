@@ -6,6 +6,7 @@ solution_1 () {
     echo
     answer=0
 
+    
 
     echo
     echo "Answer is: $answer"
@@ -21,6 +22,7 @@ solution_2 () {
     answer=0
 
     
+
     echo
     echo "Answer is: $answer"
     seconds_end=$SECONDS
